@@ -1,0 +1,18 @@
+{
+  "name": "wakeup-pro",
+  "version": "1.0.0",
+  "description": "WakeUp Pro — Challenge-based smart alarm clock with Android APK",
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/app.test.js"
+  },
+  "keywords": [
+    "alarm",
+    "challenge-alarm",
+    "android",
+    "apk",
+    "sleep-if-u-can"
+  ],
+  "author": "",
+  "license": "MIT"
+}

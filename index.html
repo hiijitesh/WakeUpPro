@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WakeUp Pro — Challenge-Based Smart Alarm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Bar -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="13" r="8"></circle>
+            <path d="M12 9v4l2.5 2.5"></path>
+            <path d="m5 3 4 3"></path>
+            <path d="m19 3-4 3"></path>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>WakeUp <span>Pro</span></h1>
+          <span class="brand-tag">Challenge Alarm &bull; Sleep If U Can</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="testAudioBtn" class="btn btn-secondary btn-sm" title="Test Alarm Synthesizer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+          Sound Check
+        </button>
+        <button id="openNewAlarmBtn" class="btn btn-primary">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Alarm
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero / Live Clock Display -->
+    <section class="clock-hero">
+      <div class="clock-display-card">
+        <div class="live-date" id="liveDate">Saturday, October 17</div>
+        <div class="digital-clock" id="digitalClock">
+          <span class="digits" id="clockTime">00:00:00</span>
+          <span class="ampm" id="clockAmPm">AM</span>
+        </div>
+        <div class="next-alarm-banner" id="nextAlarmBanner">
+          <div class="pulse-indicator"></div>
+          <span id="nextAlarmText">No upcoming alarms scheduled</span>
+        </div>
+      </div>
+
+      <!-- Quick Stats Card -->
+      <div class="stats-card">
+        <div class="stat-item">
+          <div class="stat-icon flame">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-.8 2.2-2.5 4.3-4.2 6.1C6.1 9.9 5 12 5 14.4 5 18.6 8.1 22 12 22s7-3.4 7-7.6c0-2.4-1.1-4.5-2.8-6.3-1.7-1.8-3.4-3.9-4.2-6.1z"></path></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-val" id="streakCount">5 Days</span>
+            <span class="stat-label">Wake-Up Streak</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon trophy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.45 1-1 1H8c-.55 0-1 .45-1 1v1h10v-1c0-.55-.45-1-1-1h-1c-.55 0-1-.45-1-1v-2.34"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-val" id="missionsSolved">24</span>
+            <span class="stat-label">Missions Solved</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-icon shield">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div class="stat-details">
+            <span class="stat-val badge-pro">PRO ACTIVE</span>
+            <span class="stat-label">Unbreakable Wake</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Alarm Manager Section -->
+    <main class="alarm-manager">
+      <div class="section-header">
+        <h2>Your Alarms</h2>
+        <span class="alarm-count-badge" id="alarmCountBadge">3 Alarms</span>
+      </div>
+
+      <div class="alarms-grid" id="alarmsList">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal: Create / Edit Alarm -->
+  <div class="modal-backdrop" id="alarmModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalTitle">Create New Challenge Alarm</h3>
+        <button class="btn-close" id="closeModalBtn">&times;</button>
+      </div>
+
+      <form id="alarmForm">
+        <div class="form-row time-input-container">
+          <label for="alarmTime">Alarm Time</label>
+          <input type="time" id="alarmTime" required value="07:00">
+        </div>
+
+        <div class="form-row">
+          <label for="alarmLabel">Alarm Label</label>
+          <input type="text" id="alarmLabel" placeholder="e.g. Morning Workout, Deep Work" value="Rise & Grind">
+        </div>
+
+        <div class="form-row">
+          <label>Repeat Days</label>
+          <div class="days-selector" id="daysSelector">
+            <button type="button" class="day-btn" data-day="0">S</button>
+            <button type="button" class="day-btn active" data-day="1">M</button>
+            <button type="button" class="day-btn active" data-day="2">T</button>
+            <button type="button" class="day-btn active" data-day="3">W</button>
+            <button type="button" class="day-btn active" data-day="4">T</button>
+            <button type="button" class="day-btn active" data-day="5">F</button>
+            <button type="button" class="day-btn" data-day="6">S</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="missionSelect">Wake-Up Mission (Sleep If U Can)</label>
+          <div class="custom-select-wrapper">
+            <select id="missionSelect">
+              <option value="math">🧮 Math Mission — Solve arithmetic to turn off</option>
+              <option value="shake">📱 Shake Mission — High-intensity phone shake</option>
+              <option value="typing">⌨️ Typing Mission — Type motivational awake quotes</option>
+              <option value="memory">🧠 Memory Matrix — Simon-says cognitive sequence</option>
+              <option value="none">🔔 Standard Alarm — Simple dismiss</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row" id="difficultyRow">
+          <label for="missionDifficulty">Mission Difficulty</label>
+          <div class="difficulty-pills" id="difficultyPills">
+            <button type="button" class="pill" data-level="easy">Easy (1 round)</button>
+            <button type="button" class="pill active" data-level="medium">Medium (3 rounds)</button>
+            <button type="button" class="pill" data-level="hard">Hardcore (5 rounds)</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="soundSelect">Alarm Tone (Web Audio Synth)</label>
+          <div class="sound-select-row">
+            <select id="soundSelect">
+              <option value="siren">🚨 Urgent Digital Siren</option>
+              <option value="radar">📡 Energetic Radar Pulse</option>
+              <option value="synth">⚡ 80s Synth Wake Wave</option>
+              <option value="beep">⏰ Relentless Double Beep</option>
+              <option value="bell">🔔 High-Pitch Clock Bell</option>
+            </select>
+            <button type="button" id="previewToneBtn" class="btn btn-secondary btn-sm">Preview Tone</button>
+          </div>
+        </div>
+
+        <div class="pro-toggles-section">
+          <h4>Pro Anti-Oversleep Features</h4>
+          <div class="toggle-group">
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <strong>Wake-Up Check (5 min)</strong>
+                <p>Verifies you are still out of bed 5 mins after mission completion.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="wakeupCheckToggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <strong>Volume Creep (Gentle Ramp)</strong>
+                <p>Gradually increases tone from 20% to 100% over 30 seconds.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="volumeCreepToggle" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="toggle-item">
+              <div class="toggle-info">
+                <strong>Hardcore Dismissal</strong>
+                <p>Disables snooze completely. You MUST complete the mission.</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="noSnoozeToggle">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="cancelModalBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Alarm</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Fullscreen Alarm Ringing Screen -->
+  <div class="alarm-ringing-overlay" id="alarmRingingOverlay">
+    <div class="ringing-glow-ring"></div>
+    <div class="ringing-content">
+      <div class="ringing-bell-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+      </div>
+
+      <div class="ringing-time" id="ringingTime">07:00 AM</div>
+      <h2 class="ringing-label" id="ringingLabel">Rise & Grind!</h2>
+      <p class="ringing-mission-banner" id="ringingMissionBanner">
+        🔒 Mission Locked: Solve the challenge to silence this alarm!
+      </p>
+
+      <div class="ringing-actions">
+        <button id="startMissionBtn" class="btn btn-mission-start">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+          Begin Mission to Silence
+        </button>
+        <button id="snoozeBtn" class="btn btn-snooze">Snooze (5 min)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fullscreen Active Mission Challenge Modal -->
+  <div class="mission-modal-overlay" id="missionOverlay">
+    <div class="mission-card">
+      <div class="mission-header">
+        <div class="mission-title-group">
+          <span class="mission-badge" id="missionTypeBadge">Math Mission</span>
+          <h3 id="missionTitle">Solve the Math Problem</h3>
+        </div>
+        <div class="round-counter" id="roundCounter">Round 1 / 3</div>
+      </div>
+
+      <!-- Challenge: Math -->
+      <div class="challenge-stage" id="mathStage">
+        <div class="math-problem-box" id="mathProblem">17 &times; 4 + 23 = ?</div>
+        <div class="math-input-box">
+          <input type="number" id="mathAnswerInput" placeholder="Enter answer..." autocomplete="off">
+          <button id="submitMathBtn" class="btn btn-primary">Submit</button>
+        </div>
+        <div class="keypad-grid" id="virtualKeypad">
+          <button class="key-btn" data-key="1">1</button>
+          <button class="key-btn" data-key="2">2</button>
+          <button class="key-btn" data-key="3">3</button>
+          <button class="key-btn" data-key="4">4</button>
+          <button class="key-btn" data-key="5">5</button>
+          <button class="key-btn" data-key="6">6</button>
+          <button class="key-btn" data-key="7">7</button>
+          <button class="key-btn" data-key="8">8</button>
+          <button class="key-btn" data-key="9">9</button>
+          <button class="key-btn clear" data-key="clear">C</button>
+          <button class="key-btn" data-key="0">0</button>
+          <button class="key-btn enter" data-key="enter">&crarr;</button>
+        </div>
+      </div>
+
+      <!-- Challenge: Shake -->
+      <div class="challenge-stage hidden" id="shakeStage">
+        <div class="shake-visualizer">
+          <div class="shake-phone-icon" id="shakePhoneIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+          </div>
+          <div class="shake-progress-track">
+            <div class="shake-progress-bar" id="shakeProgressBar"></div>
+          </div>
+          <div class="shake-percent" id="shakePercent">0%</div>
+          <p class="shake-instruct">Shake your device vigorously or mash the turbo button below!</p>
+          <button id="manualShakeBtn" class="btn btn-shake-turbo">SHAKE! 💥</button>
+        </div>
+      </div>
+
+      <!-- Challenge: Typing -->
+      <div class="challenge-stage hidden" id="typingStage">
+        <div class="quote-target-box" id="quoteTargetText">
+          "Discipline is choosing between what you want now and what you want most."
+        </div>
+        <textarea id="typingInput" placeholder="Type the exact quote above..." rows="3"></textarea>
+        <div class="typing-status" id="typingStatus">Characters left: <span id="charsLeft">75</span></div>
+        <button id="submitTypingBtn" class="btn btn-primary">Check Quote</button>
+      </div>
+
+      <!-- Challenge: Memory Matrix -->
+      <div class="challenge-stage hidden" id="memoryStage">
+        <p class="memory-instruct" id="memoryInstruct">Watch the illuminated sequence...</p>
+        <div class="memory-grid" id="memoryGrid">
+          <div class="mem-tile" data-idx="0"></div>
+          <div class="mem-tile" data-idx="1"></div>
+          <div class="mem-tile" data-idx="2"></div>
+          <div class="mem-tile" data-idx="3"></div>
+          <div class="mem-tile" data-idx="4"></div>
+          <div class="mem-tile" data-idx="5"></div>
+          <div class="mem-tile" data-idx="6"></div>
+          <div class="mem-tile" data-idx="7"></div>
+          <div class="mem-tile" data-idx="8"></div>
+        </div>
+      </div>
+
+      <div class="mission-footer-notice">
+        <span>⚠️ Alarm synthesizer will keep ringing until this mission is 100% resolved.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wake-Up Check Reminder Popup -->
+  <div class="wakeup-check-overlay hidden" id="wakeupCheckOverlay">
+    <div class="wakeup-check-card">
+      <div class="check-icon">👁️</div>
+      <h3>Are you still awake?</h3>
+      <p>5-minute wake-up check in progress. Tap the button to verify you haven't fallen back asleep!</p>
+      <div class="check-countdown" id="checkCountdown">60s remaining</div>
+      <button id="confirmAwakeBtn" class="btn btn-primary btn-lg">I'M AWAKE! ☀️</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
